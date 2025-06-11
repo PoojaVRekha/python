@@ -1,1 +1,1101 @@
+import numpy as np
 
+import pandas as pd
+
+import matplotlib.pyplot as plt
+
+import seaborn as sns
+
+from sklearn.model_selection import train_test_split
+
+from sklearn.linear_model import LinearRegression
+
+from sklearn import metrics
+
+from xgboost import XGBRegressor
+
+dataset = pd.read_csv("BostonHousing.csv")
+
+dataset
+
+{"summary":"{\n \"name\": \"dataset\",\n \"rows\": 506,\n
+
+\"fields\": [\n {\n \"column\": \"crim\",\n 
+
+\"properties\": {\n \"dtype\": \"number\",\n \"std\": 
+
+8.601545105332487,\n \"min\": 0.00632,\n \"max\": 
+
+88.9762,\n \"num_unique_values\": 504,\n \"samples\": [\
+
+n 0.09178,\n 0.05644,\n 0.10574\
+
+n ],\n \"semantic_type\": \"\",\n 
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"zn\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 23.322452994515036,\n \"min\": 0.0,\n \"max\": 
+
+100.0,\n \"num_unique_values\": 26,\n \"samples\": [\n 
+
+25.0,\n 30.0,\n 18.0\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"indus\",\n \"properties\": {\
+
+n \"dtype\": \"number\",\n \"std\": 6.8603529408975845,\
+
+n \"min\": 0.46,\n \"max\": 27.74,\n 
+
+\"num_unique_values\": 76,\n \"samples\": [\n 8.14,\n
+
+1.47,\n 1.22\n ],\n \"semantic_type\": \"\",\n
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"chas\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 0,\n \"min\": 0,\n \"max\": 1,\n 
+
+\"num_unique_values\": 2,\n \"samples\": [\n 1,\n 
+
+0\n ],\n \"semantic_type\": \"\",\n 
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"nox\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 0.11587767566755611,\n \"min\": 0.385,\n 
+
+\"max\": 0.871,\n \"num_unique_values\": 81,\n 
+
+\"samples\": [\n 0.401,\n 0.538\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"rm\",\n \"properties\": {\n 
+
+\"dtype\": \"number\",\n \"std\": 0.7026171434153237,\n 
+
+\"min\": 3.561,\n \"max\": 8.78,\n 
+
+\"num_unique_values\": 446,\n \"samples\": [\n 6.849,\
+
+n 4.88\n ],\n \"semantic_type\": \"\",\n 
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"age\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 28.148861406903638,\n \"min\": 2.9,\n \"max\":
+100.0,\n \"num_unique_values\": 356,\n \"samples\": [\n
+
+51.8,\n 33.8\n ],\n \"semantic_type\": \"\",\n
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"dis\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 2.1057101266276104,\n \"min\": 1.1296,\n 
+
+\"max\": 12.1265,\n \"num_unique_values\": 412,\n 
+
+\"samples\": [\n 2.2955,\n 4.2515\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"rad\",\n \"properties\": {\n
+
+\"dtype\": \"number\",\n \"std\": 8,\n \"min\": 1,\n 
+
+\"max\": 24,\n \"num_unique_values\": 9,\n \"samples\": 
+
+[\n 7,\n 2\n ],\n \"semantic_type\":
+
+\"\",\n \"description\": \"\"\n }\n },\n {\n 
+
+\"column\": \"tax\",\n \"properties\": {\n \"dtype\":
+
+\"number\",\n \"std\": 168,\n \"min\": 187,\n 
+
+\"max\": 711,\n \"num_unique_values\": 66,\n 
+
+\"samples\": [\n 370,\n 666\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"ptratio\",\n \"properties\": 
+
+{\n \"dtype\": \"number\",\n \"std\": 
+
+2.164945523714446,\n \"min\": 12.6,\n \"max\": 22.0,\n 
+
+\"num_unique_values\": 46,\n \"samples\": [\n 19.6,\n
+
+15.6\n ],\n \"semantic_type\": \"\",\n 
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"b\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 91.29486438415779,\n \"min\": 0.32,\n \"max\": 
+
+396.9,\n \"num_unique_values\": 357,\n \"samples\": [\n
+
+396.24,\n 395.11\n ],\n \"semantic_type\":
+
+\"\",\n \"description\": \"\"\n }\n },\n {\n 
+
+\"column\": \"lstat\",\n \"properties\": {\n \"dtype\":
+
+\"number\",\n \"std\": 7.141061511348571,\n \"min\": 
+
+1.73,\n \"max\": 37.97,\n \"num_unique_values\": 455,\n
+
+\"samples\": [\n 6.15,\n 4.32\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"price\",\n \"properties\": {\
+
+n \"dtype\": \"number\",\n \"std\": 9.19710408737982,\n
+
+\"min\": 5.0,\n \"max\": 50.0,\n \"num_unique_values\": 
+
+229,\n \"samples\": [\n 14.1,\n 22.5\n 
+
+],\n \"semantic_type\": \"\",\n \"description\": \"\"\n
+
+}\n }\n ]\n}","type":"dataframe","variable_name":"dataset"}
+
+dataset.head()
+
+{"summary":"{\n \"name\": \"dataset\",\n \"rows\": 506,\n
+
+\"fields\": [\n {\n \"column\": \"crim\",\n 
+
+\"properties\": {\n \"dtype\": \"number\",\n \"std\": 
+
+8.601545105332487,\n \"min\": 0.00632,\n \"max\": 
+
+88.9762,\n \"num_unique_values\": 504,\n \"samples\": [\
+
+n 0.09178,\n 0.05644,\n 0.10574\
+
+n ],\n \"semantic_type\": \"\",\n
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"zn\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 23.322452994515036,\n \"min\": 0.0,\n \"max\": 
+
+100.0,\n \"num_unique_values\": 26,\n \"samples\": [\n 
+
+25.0,\n 30.0,\n 18.0\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"indus\",\n \"properties\": {\
+
+n \"dtype\": \"number\",\n \"std\": 6.8603529408975845,\
+
+n \"min\": 0.46,\n \"max\": 27.74,\n 
+
+\"num_unique_values\": 76,\n \"samples\": [\n 8.14,\n
+
+1.47,\n 1.22\n ],\n \"semantic_type\": \"\",\n
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"chas\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 0,\n \"min\": 0,\n \"max\": 1,\n 
+
+\"num_unique_values\": 2,\n \"samples\": [\n 1,\n 
+
+0\n ],\n \"semantic_type\": \"\",\n 
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"nox\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 0.11587767566755611,\n \"min\": 0.385,\n 
+
+\"max\": 0.871,\n \"num_unique_values\": 81,\n 
+
+\"samples\": [\n 0.401,\n 0.538\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"rm\",\n \"properties\": {\n 
+
+\"dtype\": \"number\",\n \"std\": 0.7026171434153237,\n 
+
+\"min\": 3.561,\n \"max\": 8.78,\n 
+
+\"num_unique_values\": 446,\n \"samples\": [\n 6.849,\
+
+n 4.88\n ],\n \"semantic_type\": \"\",\n 
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"age\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 28.148861406903638,\n \"min\": 2.9,\n \"max\": 
+
+100.0,\n \"num_unique_values\": 356,\n \"samples\": [\n
+
+51.8,\n 33.8\n ],\n \"semantic_type\": \"\",\n
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"dis\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 2.1057101266276104,\n \"min\": 1.1296,\n 
+
+\"max\": 12.1265,\n \"num_unique_values\": 412,\n 
+
+\"samples\": [\n 2.2955,\n 4.2515\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"rad\",\n \"properties\": {\n
+
+\"dtype\": \"number\",\n \"std\": 8,\n \"min\": 1,\n 
+
+\"max\": 24,\n \"num_unique_values\": 9,\n \"samples\": 
+
+[\n 7,\n 2\n ],\n \"semantic_type\":
+
+\"\",\n \"description\": \"\"\n }\n },\n {\n 
+
+\"column\": \"tax\",\n \"properties\": {\n \"dtype\":
+
+\"number\",\n \"std\": 168,\n \"min\": 187,\n 
+
+\"max\": 711,\n \"num_unique_values\": 66,\n 
+
+\"samples\": [\n 370,\n 666\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"ptratio\",\n \"properties\":
+
+{\n \"dtype\": \"number\",\n \"std\": 
+
+2.164945523714446,\n \"min\": 12.6,\n \"max\": 22.0,\n 
+
+\"num_unique_values\": 46,\n \"samples\": [\n 19.6,\n
+
+15.6\n ],\n \"semantic_type\": \"\",\n 
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"b\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 91.29486438415779,\n \"min\": 0.32,\n \"max\": 
+
+396.9,\n \"num_unique_values\": 357,\n \"samples\": [\n
+
+396.24,\n 395.11\n ],\n \"semantic_type\":
+
+\"\",\n \"description\": \"\"\n }\n },\n {\n 
+
+\"column\": \"lstat\",\n \"properties\": {\n \"dtype\":
+
+\"number\",\n \"std\": 7.141061511348571,\n \"min\": 
+
+1.73,\n \"max\": 37.97,\n \"num_unique_values\": 455,\n
+
+\"samples\": [\n 6.15,\n 4.32\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"price\",\n \"properties\": {\
+
+n \"dtype\": \"number\",\n \"std\": 9.19710408737982,\n
+
+\"min\": 5.0,\n \"max\": 50.0,\n \"num_unique_values\": 
+
+229,\n \"samples\": [\n 14.1,\n 22.5\n 
+
+],\n \"semantic_type\": \"\",\n \"description\": \"\"\n
+
+}\n }\n ]\n}","type":"dataframe","variable_name":"dataset"}
+
+dataset.tail()
+
+{"summary":"{\n \"name\": \"dataset\",\n \"rows\": 5,\n \"fields\":
+
+[\n {\n \"column\": \"crim\",\n \"properties\": {\n 
+
+\"dtype\": \"number\",\n \"std\": 0.026031022261908964,\n 
+
+\"min\": 0.04527,\n \"max\": 0.10959,\n 
+
+\"num_unique_values\": 5,\n \"samples\": [\n 0.04527,\
+
+n 0.04741,\n 0.06076\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"zn\",\n \"properties\": {\n 
+
+\"dtype\": \"number\",\n \"std\": 0.0,\n \"min\": 0.0,\n
+
+\"max\": 0.0,\n \"num_unique_values\": 1,\n \"samples\":
+
+[\n 0.0\n ],\n \"semantic_type\": \"\",\n 
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"indus\",\n \"properties\": {\n \"dtype\": \"number\",\n
+
+\"std\": 0.0,\n \"min\": 11.93,\n \"max\": 11.93,\n 
+
+\"num_unique_values\": 1,\n \"samples\": [\n 11.93\n 
+
+],\n \"semantic_type\": \"\",\n \"description\": \"\"\n
+
+}\n },\n {\n \"column\": \"chas\",\n \"properties\": 
+
+{\n \"dtype\": \"number\",\n \"std\": 0,\n 
+
+\"min\": 0,\n \"max\": 0,\n \"num_unique_values\": 1,\n
+
+\"samples\": [\n 0\n ],\n \"semantic_type\":
+
+\"\",\n \"description\": \"\"\n }\n },\n {\n 
+
+\"column\": \"nox\",\n \"properties\": {\n \"dtype\":
+
+\"number\",\n \"std\": 0.0,\n \"min\": 0.573,\n 
+
+\"max\": 0.573,\n \"num_unique_values\": 1,\n 
+
+\"samples\": [\n 0.573\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+n },\n {\n \"column\": \"rm\",\n \"properties\": {\n 
+
+\"dtype\": \"number\",\n \"std\": 0.4144053571082303,\n 
+
+\"min\": 6.03,\n \"max\": 6.976,\n 
+
+\"num_unique_values\": 5,\n \"samples\": [\n 6.12\n 
+
+],\n \"semantic_type\": \"\",\n \"description\": \"\"\n
+
+}\n },\n {\n \"column\": \"age\",\n \"properties\": {\
+
+n \"dtype\": \"number\",\n \"std\": 9.059635754267388,\n
+
+\"min\": 69.1,\n \"max\": 91.0,\n \"num_unique_values\":
+
+5,\n \"samples\": [\n 76.7\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"dis\",\n \"properties\": {\n
+
+\"dtype\": \"number\",\n \"std\": 0.13972063197681292,\n 
+
+\"min\": 2.1675,\n \"max\": 2.505,\n 
+
+\"num_unique_values\": 5,\n \"samples\": [\n 2.2875\n
+
+],\n \"semantic_type\": \"\",\n \"description\": \"\"\n
+
+}\n },\n {\n \"column\": \"rad\",\n \"properties\": {\
+
+n \"dtype\": \"number\",\n \"std\": 0,\n \"min\":
+
+1,\n \"max\": 1,\n \"num_unique_values\": 1,\n 
+
+\"samples\": [\n 1\n ],\n \"semantic_type\":
+
+\"\",\n \"description\": \"\"\n }\n },\n {\n 
+
+\"column\": \"tax\",\n \"properties\": {\n \"dtype\":
+
+\"number\",\n \"std\": 0,\n \"min\": 273,\n 
+
+\"max\": 273,\n \"num_unique_values\": 1,\n \"samples\":
+
+[\n 273\n ],\n \"semantic_type\": \"\",\n 
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"ptratio\",\n \"properties\": {\n \"dtype\": \"number\",\
+
+n \"std\": 0.0,\n \"min\": 21.0,\n \"max\": 
+
+21.0,\n \"num_unique_values\": 1,\n \"samples\": [\n 
+
+21.0\n ],\n \"semantic_type\": \"\",\n 
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"b\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 2.3469490833846267,\n \"min\": 391.99,\n 
+
+\"max\": 396.9,\n \"num_unique_values\": 3,\n 
+
+\"samples\": [\n 391.99\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"lstat\",\n \"properties\": {\
+
+n \"dtype\": \"number\",\n \"std\": 1.698322701962145,\n
+
+\"min\": 5.64,\n \"max\": 9.67,\n \"num_unique_values\":
+
+5,\n \"samples\": [\n 9.08\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"price\",\n \"properties\": {\
+
+n \"dtype\": \"number\",\n \"std\": 4.7647665210375205,\
+
+n \"min\": 11.9,\n \"max\": 23.9,\n 
+
+\"num_unique_values\": 5,\n \"samples\": [\n 20.6\n 
+
+],\n \"semantic_type\": \"\",\n \"description\": \"\"\n
+
+}\n }\n ]\n}","type":"dataframe"}
+
+dataset.shape
+
+(506, 14)
+
+dataset.isnull().sum()
+
+crim 0
+
+zn 0
+
+indus 0
+
+chas 0
+
+nox 0
+
+rm 0
+
+age 0
+
+dis 0
+
+rad 0
+
+tax 0
+
+ptratio 0
+
+b 0
+
+lstat 0
+
+price 0
+
+dtype: int64
+
+# if we get any null value then we can simply replace that mull value 
+
+with the help of the mean or the median of the dataset.
+
+correlation = dataset.corr()
+
+plt.figure(figsize=(10,10))
+
+sns.heatmap(correlation,cbar=True,square=True,fmt='.1f',annot=True,ann
+
+ot_kws={'size':8}, cmap='Blues')
+
+<Axes: >
+
+X = dataset.drop('price',axis=1)
+
+Y = dataset['price']
+
+X
+
+{"summary":"{\n \"name\": \"X\",\n \"rows\": 506,\n \"fields\": [\n
+
+{\n \"column\": \"crim\",\n \"properties\": {\n 
+
+\"dtype\": \"number\",\n \"std\": 8.601545105332487,\n 
+
+\"min\": 0.00632,\n \"max\": 88.9762,\n 
+
+\"num_unique_values\": 504,\n \"samples\": [\n 
+
+0.09178,\n 0.05644,\n 0.10574\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"zn\",\n \"properties\": {\n 
+
+\"dtype\": \"number\",\n \"std\": 23.322452994515036,\n 
+
+\"min\": 0.0,\n \"max\": 100.0,\n \"num_unique_values\":
+
+26,\n \"samples\": [\n 25.0,\n 30.0,\n 
+
+18.0\n ],\n \"semantic_type\": \"\",\n 
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"indus\",\n \"properties\": {\n \"dtype\": \"number\",\n
+
+\"std\": 6.8603529408975845,\n \"min\": 0.46,\n \"max\":
+
+27.74,\n \"num_unique_values\": 76,\n \"samples\": [\n 
+
+8.14,\n 1.47,\n 1.22\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"chas\",\n \"properties\": {\n
+
+\"dtype\": \"number\",\n \"std\": 0,\n \"min\": 0,\n 
+
+\"max\": 1,\n \"num_unique_values\": 2,\n \"samples\": 
+
+[\n 1,\n 0\n ],\n \"semantic_type\":
+
+\"\",\n \"description\": \"\"\n }\n },\n {\n 
+
+\"column\": \"nox\",\n \"properties\": {\n \"dtype\":
+
+\"number\",\n \"std\": 0.11587767566755611,\n \"min\": 
+
+0.385,\n \"max\": 0.871,\n \"num_unique_values\": 81,\n
+
+\"samples\": [\n 0.401,\n 0.538\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"rm\",\n \"properties\": {\n 
+
+\"dtype\": \"number\",\n \"std\": 0.7026171434153237,\n 
+
+\"min\": 3.561,\n \"max\": 8.78,\n 
+
+\"num_unique_values\": 446,\n \"samples\": [\n 6.849,\
+
+n 4.88\n ],\n \"semantic_type\": \"\",\n 
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"age\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 28.148861406903638,\n \"min\": 2.9,\n \"max\": 
+
+100.0,\n \"num_unique_values\": 356,\n \"samples\": [\n
+
+51.8,\n 33.8\n ],\n \"semantic_type\": \"\",\n
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"dis\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 2.1057101266276104,\n \"min\": 1.1296,\n 
+
+\"max\": 12.1265,\n \"num_unique_values\": 412,\n 
+
+\"samples\": [\n 2.2955,\n 4.2515\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"rad\",\n \"properties\": {\n
+
+\"dtype\": \"number\",\n \"std\": 8,\n \"min\": 1,\n 
+
+\"max\": 24,\n \"num_unique_values\": 9,\n \"samples\": 
+
+[\n 7,\n 2\n ],\n \"semantic_type\":
+
+\"\",\n \"description\": \"\"\n }\n },\n {\n 
+
+\"column\": \"tax\",\n \"properties\": {\n \"dtype\":
+
+\"number\",\n \"std\": 168,\n \"min\": 187,\n 
+
+\"max\": 711,\n \"num_unique_values\": 66,\n 
+
+\"samples\": [\n 370,\n 666\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n },\n {\n \"column\": \"ptratio\",\n \"properties\": 
+
+{\n \"dtype\": \"number\",\n \"std\":
+
+2.164945523714446,\n \"min\": 12.6,\n \"max\": 22.0,\n 
+
+\"num_unique_values\": 46,\n \"samples\": [\n 19.6,\n
+
+15.6\n ],\n \"semantic_type\": \"\",\n 
+
+\"description\": \"\"\n }\n },\n {\n \"column\":
+
+\"b\",\n \"properties\": {\n \"dtype\": \"number\",\n 
+
+\"std\": 91.29486438415779,\n \"min\": 0.32,\n \"max\": 
+
+396.9,\n \"num_unique_values\": 357,\n \"samples\": [\n
+
+396.24,\n 395.11\n ],\n \"semantic_type\":
+
+\"\",\n \"description\": \"\"\n }\n },\n {\n 
+
+\"column\": \"lstat\",\n \"properties\": {\n \"dtype\":
+
+\"number\",\n \"std\": 7.141061511348571,\n \"min\": 
+
+1.73,\n \"max\": 37.97,\n \"num_unique_values\": 455,\n
+
+\"samples\": [\n 6.15,\n 4.32\n ],\n 
+
+\"semantic_type\": \"\",\n \"description\": \"\"\n }\
+
+n }\n ]\n}","type":"dataframe","variable_name":"X"}
+
+Y
+
+0 24.0
+
+1 21.6
+
+2 34.7
+
+3 33.4
+
+4 36.2
+
+ ... 
+
+501 22.4
+
+502 20.6
+
+503 23.9
+
+504 22.0
+
+505 11.9
+
+Name: price, Length: 506, dtype: float64
+
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, 
+
+test_size=0.2 , random_state=31)
+
+print(X.shape, X_train.shape, X_test.shape)
+
+(506, 13) (404, 13) (102, 13)
+
+model = LinearRegression()
+
+model.fit(X_train,Y_train)
+
+LinearRegression()
+
+model_prediction = model.predict(X_train)
+
+model_prediction
+
+array([33.09962641, 40.3843647 , 9.73778717, 28.96600679, 
+
+19.42555766,
+
+ 19.44292781, 19.21345032, 36.6816734 , 24.40180329, 
+
+20.76849062,
+,20.08797923, 19.43655713, 14.58647977, 25.63262879, 
+
+31.89142855,
+
+ 18.2319688 , 29.24299463, 0.90915451, 19.90251499, 
+
+24.95590303,
+
+ 34.73728372, 28.51150237, 14.33692703, 17.9865908 , 
+
+16.48825691,
+
+ 27.36478716, 16.12308727, 3.39281058, 31.2558234 , 
+
+15.84191241,
+
+ 15.14619422, 23.6536838 , 25.04034046, 29.96558216, 
+
+35.47216565,
+
+ 15.09223026, 13.14540151, 16.83970247, 40.64000746, 
+
+19.52965421,
+
+ 19.45986366, 27.36183744, 15.93833014, 44.30564178, 
+
+21.5493154 ,
+
+ 17.91725229, 18.63517119, 15.55849973, 20.69118312, 
+
+16.87209496,
+
+ 24.48820256, 26.51209399, 25.46310047, 14.71542856, 
+
+19.53929231,
+
+ 31.09356929, 27.38719857, 36.08594262, 14.75957297, 
+
+12.67715526,
+
+ 40.75194172, 8.86296633, 27.13317449, 22.37415076, 
+
+28.39780334,
+
+ 17.34619057, 31.56652691, 30.44539623, 25.51101549, 
+
+20.62210066,
+
+ 26.03304209, 37.11497745, 11.4718954 , 22.26163529, 
+
+33.27561175,
+
+ 33.46558424, 23.25481442, 23.24138472, 23.53686262, 
+
+30.54111118,
+
+ 20.5850412 , 22.26401828, 19.37211104, 13.14169516, 
+
+25.44250282,
+
+ 22.88296081, 23.98804167, 19.927059 , 24.66527656, 
+
+24.21682756,
+
+ 14.08155284, 23.09612215, 24.08490686, 19.43727221, 
+
+20.12161283,
+
+ 18.53030661, 26.73751928, 21.55296238, 15.32816703, 
+
+37.77192683,
+
+ 17.54981313, 39.72533952, 34.84701557, 37.50378445, 
+
+20.83981408,
+
+ 4.05496868, 35.96368507, 26.04431778, 24.99669667, 
+
+22.06800617,
+
+ 38.66858833, 23.7879284 , 29.82797102, 20.78945128, 
+
+28.32394156,
+
+ 6.19615015, 21.71589448, 22.1865478 , 13.75887417, 
+
+32.74650511,
+
+ 21.41923987, 36.20387531, 20.55047817, 26.73319062, 
+
+12.56311885,
+
+ 21.56156942, 25.07194929, 21.05704901, 18.99616288, 
+
+15.60952383,
+
+ 21.21579876, 34.56673537, 16.92863012, 17.12180752,
+17.57678502,
+
+ 19.77156519, 7.38827589, 17.63435084, 19.48742123, 
+
+17.20064676,
+
+ 13.36430405, 18.99529356, 26.70458291, 28.99452247, 
+
+23.26277954,
+
+ 31.71238487, 28.66406811, 7.76301037, 21.91346737, 
+
+16.99771571,
+
+ 28.8055228 , 32.92825747, 24.85810044, 33.65957962, 
+
+13.06622423,
+
+ 14.29976615, 36.98598662, 6.43185673, 31.28821548, 
+
+26.01020311,
+
+ 17.69132533, 15.8270425 , 33.00062476, 27.62470019, 
+
+27.26053943,
+
+ 19.51088563, 26.81661683, 19.82156088, 28.86512068, 
+
+34.72263345,
+
+ 13.89489513, 28.44136843, 21.73651212, 23.64525073, 
+
+32.08409007,
+
+ 30.29149877, 24.35509577, 21.19994807, 9.05200992, 
+
+24.78474879,
+
+ 21.95206293, 27.84580307, 10.00565574, 17.68031998, 
+
+11.46622633,
+
+ 16.54016127, 16.38870429, 21.17560552, 25.34712307, 
+
+21.23053186,
+
+ 36.00022943, 21.31981712, 33.8695171 , 25.11921918, 
+
+31.15705346,
+
+ 22.3570076 , 27.73347992, 34.41085434, 21.34813301, 
+
+28.44255877,
+
+ 31.272056 , 11.60720701, 22.76423635, 30.67922419, 
+
+15.19965124,
+
+ 30.22180013, 19.97000145, 27.28056707, 14.65217073, 
+
+23.38518272,
+
+ 24.00111763, 13.43364766, 30.56096215, 25.13221858, 
+
+33.58949996,
+
+ 23.03673241, 31.95185608, 25.35678484, 18.60706187, 
+
+18.811182 ,
+
+ 15.12198071, 25.1174487 , 20.46407011, 18.48977205, 
+
+20.08184209,
+
+ -4.62690394, 24.93385724, 19.65069873, 26.09196726, 
+
+21.55086126,
+
+ 26.25331486, 33.18760928, 25.51989214, 17.098112 , 
+
+32.37473858,
+
+ 40.1411072 , 23.60423583, 17.86310468, 13.93891133, 
+
+33.37142628,
+
+ 20.71439683, 14.36130315, 19.25299285, 27.91191105, 
+
+25.2981707 ,
+
+ 22.80540119, 20.72458132, 21.94046955, 17.56148487, 
+
+13.71636652,
+
+ 9.03176654, 9.24293124, 22.98652234, 30.37310838, 
+
+19.45624197,
+36.13113093, 18.45728453, 21.68577463, 30.07892109, 
+
+21.34937833,
+
+ 7.98339532, 24.40432969, 11.4003989 , 23.65681097, 
+
+30.52295754,
+
+ 22.28140842, 18.49842328, 16.8950035 , 16.35641627, 
+
+19.02475298,
+
+ 30.20862037, 14.49817501, 37.44391643, 23.15169575, 
+
+25.5703344 ,
+
+ 35.11221982, 30.52478908, 5.27909497, 24.4623984 , 
+
+26.73605684,
+
+ 13.92437989, 35.15467771, 21.9009443 , 28.61873961, 
+
+23.30275141,
+
+ 11.85197488, 15.80438474, 16.68910974, 20.00648684, 
+
+32.85774562,
+
+ 22.89428733, 27.56182048, 20.919819 , 13.78740659, 
+
+14.65263938,
+
+ 21.46507993, 26.94352378, 21.79538775, 10.27292886, 
+
+34.79713422,
+
+ 17.78557175, 21.36597067, 17.515894 , 37.46734134, 
+
+29.01209347,
+
+ 29.53772394, 18.66628711, 6.9055902 , 13.79281545, 
+
+20.01209408,
+
+ 24.94738449, 20.43727789, 15.04208064, 27.6021233 , 
+
+31.71506387,
+
+ 20.74630317, 28.97820749, 20.29528314, 19.08799109, 
+
+32.51919657,
+
+ 6.69596417, 18.88677692, 28.87572751, 15.7631349 , 
+
+20.91231002,
+
+ 26.44648062, 32.43124761, 23.7113944 , 21.45796774, 
+
+18.51035932,
+
+ 22.87678976, 15.3786332 , 24.27215534, 28.87777278, 
+
+23.79466804,
+
+ 42.17170969, 23.20613175, 20.71757159, 23.79415292, 
+
+18.56367023,
+
+ 41.30189031, 22.97707397, 21.07975951, 28.29988926, 
+
+13.70183941,
+
+ 4.16398632, 21.229001 , 38.78516948, 13.75243456, 
+
+23.0006269 ,
+
+ 18.29578292, 24.81693545, 26.73286044, 17.40238494, 
+
+36.08260764,
+
+ 43.7738588 , 29.33589986, 21.68232985, 23.80613404, 
+
+17.23238258,
+
+ 28.68422035, 20.55442901, 17.32451336, 17.64413209, 
+
+26.05380974,
+
+ 18.14847981, 10.51013235, 20.46037006, 20.52602008, 
+
+12.37214658,
+
+ 16.08374316, 32.58576469, 33.82628772, 41.53390707, 
+
+23.05467035,
+
+ 19.9659932 , 22.81642728, 32.88961896, 13.88750891,
+
+23.51763398,
+
+ 1.5380848 , 20.93008457, 20.08426477, 26.75012486, 
+
+13.28328728,
+
+ 23.49959012, 16.15937381, 22.32532694, 41.38038374, 
+
+29.04543722,
+
+ 16.50951206, 16.09160003, 28.59676719, 24.59503607, 
+
+23.85406092,
+
+ 25.17297041, 19.51509583, 25.52135562, 18.68174624, 
+
+35.67494151,
+
+ 13.77469836, 20.84970173, 25.97161555, 22.20571069])
+
+score1 = metrics.r2_score(model_prediction, Y_train)
+
+print("R2 score = ",score1)
+
+R2 score = 0.6254438476647941
+
+score2 = metrics.mean_absolute_error(model_prediction, Y_train)
+
+print("Mean absolute error score = ",score2)
+
+Mean absolute error score = 3.3917071508761323
+
+model2 = XGBRegressor()
+
+model2.fit(X_train,Y_train)
+
+XGBRegressor(base_score=None, booster=None, callbacks=None,
+
+ colsample_bylevel=None, colsample_bynode=None,
+
+ colsample_bytree=None, device=None, 
+
+early_stopping_rounds=None,
+
+ enable_categorical=False, eval_metric=None, 
+
+feature_types=None,
+
+ gamma=None, grow_policy=None, importance_type=None,
+
+ interaction_constraints=None, learning_rate=None, 
+
+max_bin=None,
+
+ max_cat_threshold=None, max_cat_to_onehot=None,
+
+ max_delta_step=None, max_depth=None, max_leaves=None,
+
+ min_child_weight=None, missing=nan, 
+
+monotone_constraints=None,
+
+ multi_strategy=None, n_estimators=None, n_jobs=None,
+
+ num_parallel_tree=None, random_state=None, ...)
+
+model_prediction = model2.predict(X_train)
+
+score1 = metrics.r2_score(model_prediction, Y_train)
+
+print("R2 score = ",score1)
+
+R2 score = 0.9999971212096755
+
+score2 = metrics.mean_absolute_error(model_prediction, Y_train)
+
+print("Mean absolute error score = ",score2)
+
+Mean absolute error score = 0.0111977718844272
+
+input = np.array([[0.04527,0.0, 11.93, 0, 0.573, 6.120,
+
+76.7, 2.2875, 1, 273, 21.0, 396.90, 9.08]])
+
+model2.predict(input) # 20.6
+
+array([20.597471], dtype=float32)
